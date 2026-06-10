@@ -13,11 +13,16 @@ struct AnimatedBarAngularView: View {
     @Binding var isFeatureEnabled: Bool
     @Binding var isAnimationEnabled: Bool
     
+    private var gradientColors: [Color] {
+        let base = Color.storedGradientColors()
+        return [base[0], base[1], base[2], base[0]]
+    }
+    
     var body: some View {
         Rectangle()
             .fill(
                 AngularGradient(
-                    colors: [.purple, .blue, .cyan, .purple],
+                    colors: gradientColors,
                     center: .topLeading,
                     angle: .degrees(angle)
                 )
@@ -41,25 +46,11 @@ struct AnimatedBarView: View {
     @State private var offset: CGFloat = 0
     @Binding var isFeatureEnabled: Bool
     @Binding var isAnimationEnabled: Bool
-    private let colors: [Color] = [
-        .purple,
-        .blue,
-        .cyan,
-        .green,
-        .yellow,
-        .orange,
-        .red,
-        .purple,
 
-        // Repetición
-        .blue,
-        .cyan,
-        .green,
-        .yellow,
-        .orange,
-        .red,
-        .purple
-    ]
+    private var colors: [Color] {
+        let base = Color.storedGradientColors()
+        return base + [base[0]] + base.dropFirst() + [base[0]]
+    }
 
     var body: some View {
         GeometryReader { geo in

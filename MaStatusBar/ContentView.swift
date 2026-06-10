@@ -1,65 +1,40 @@
+import Combine
 import SwiftUI
 
 @main struct MaStatusBar: App {
     
-    @AppStorage("isFeatureEnabled") private var isFeatureEnabled = false
+    @AppStorage("isFeatureEnabled") private var isFeatureEnabled = true
     @AppStorage("isAnimationEnabled") private var isAnimationEnabled = false
+    @State private var statusWindow: NSWindow?
     
     var body: some Scene {
         WindowGroup {
             AnimatedBarView(isFeatureEnabled: $isFeatureEnabled, isAnimationEnabled: $isAnimationEnabled)
                 .background(
                     WindowAccessor { window in
-                        guard let window else { return }
-                        
-                        // Apariencia
-                        window.level = .mainMenu
-                        window.backgroundColor = .clear
-                        window.isOpaque = false
-                        window.hasShadow = false
-                        window.styleMask = [.borderless]
-                        
-                        // Comportamiento
-                        window.ignoresMouseEvents = true
-                        window.isMovable = false
-                        
-                        window.collectionBehavior = [
-                            .canJoinAllSpaces,
-                            .stationary,
-                            .ignoresCycle
-                        ]
-                        
-                        if let screen = window.screen ?? NSScreen.main {
-                            let screenFrame = screen.frame
-                            let barHeight: CGFloat = 28
-                            window.setFrame(
-                                NSRect(
-                                    x: screenFrame.minX,
-                                    y: screenFrame.maxY - barHeight,
-                                    width: screenFrame.width,
-                                    height: barHeight
-                                ),
-                                display: true
-                            )
-                        }
+                        statusWindow = window
+                        configureStatusBar(window)
                     }
                 )
+                .onReceive(
+                    NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)
+                ) { _ in
+                    configureStatusBar(statusWindow)
+                }
         }
         
         // 2. The Native Settings Window Scene
         Settings {
-            SettingsView() // The view that will display inside the settings window
+            SettingsView()
         }
         
         // 3. The Status Bar / Menu Bar Extra
         MenuBarExtra {
             Toggle("Show Status Bar", isOn: $isFeatureEnabled)
             Toggle("Start/Stop Animation", isOn: $isAnimationEnabled)
-            // 4. The magic button that opens the Settings scene
             SettingsLink {
                 Label("Settings...", systemImage: "gearshape")
             }
-            // Optional: Add the standard keyboard shortcut (Cmd + ,)
             .keyboardShortcut(",")
             
             Divider()
@@ -67,6 +42,40 @@ import SwiftUI
         } label: {
             Image(systemName: isFeatureEnabled ? "checkmark.circle.fill" : "circle")
         }
+    }
+    
+    private func configureStatusBar(_ window: NSWindow?) {
+        guard let window else { return }
+        
+        window.level = .mainMenu
+        window.backgroundColor = .clear
+        window.isOpaque = false
+        window.hasShadow = false
+        window.styleMask = [.borderless]
+        window.ignoresMouseEvents = true
+        window.isMovable = false
+        
+        window.collectionBehavior = [
+            .canJoinAllSpaces,
+            .stationary,
+            .ignoresCycle
+        ]
+        
+        positionBarOnScreen(window)
+    }
+    
+    private func positionBarOnScreen(_ window: NSWindow) {
+        guard let screenFrame = (window.screen ?? NSScreen.main)?.frame else { return }
+        let barHeight: CGFloat = 28
+        window.setFrame(
+            NSRect(
+                x: screenFrame.minX,
+                y: screenFrame.maxY - barHeight,
+                width: screenFrame.width,
+                height: barHeight
+            ),
+            display: true
+        )
     }
 }
 

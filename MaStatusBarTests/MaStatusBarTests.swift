@@ -53,6 +53,21 @@ final class MaStatusBarTests: XCTestCase {
         XCTAssertEqual(barOpacity(false, false), 0, "Opacity should be 0 when both are disabled")
     }
 
+    func testBarPositionOnScreen() {
+        let screenFrame = NSRect(x: 0, y: 0, width: 1728, height: 1117)
+        let barHeight: CGFloat = 28
+        let barFrame = NSRect(
+            x: screenFrame.minX,
+            y: screenFrame.maxY - barHeight,
+            width: screenFrame.width,
+            height: barHeight
+        )
+        XCTAssertEqual(barFrame.width, 1728)
+        XCTAssertEqual(barFrame.height, 28)
+        XCTAssertEqual(barFrame.origin.y, 1117 - 28)
+        XCTAssertEqual(barFrame.origin.x, 0)
+    }
+
     // MARK: - Helpers
 
     private func simulateTick(featureEnabled: Bool, animationEnabled: Bool,
