@@ -1,10 +1,12 @@
 import SwiftUI
-import Playgrounds
 
-@main struct MyApp: App {
+@main struct MaStatusBar: App {
+    
+    @AppStorage("isFeatureEnabled") private var isFeatureEnabled = false
+    
     var body: some Scene {
         WindowGroup {
-            AnimatedBarView()
+            AnimatedBarView(isFeatureEnabled: $isFeatureEnabled)
                 .background(
                     WindowAccessor { window in
                         guard let window else { return }
@@ -42,6 +44,27 @@ import Playgrounds
                     }
                 )
         }
+        
+        // 2. The Native Settings Window Scene
+        Settings {
+            SettingsView() // The view that will display inside the settings window
+        }
+        
+        // 3. The Status Bar / Menu Bar Extra
+        MenuBarExtra {
+            Toggle("Feature Status", isOn: $isFeatureEnabled)
+            // 4. The magic button that opens the Settings scene
+            SettingsLink {
+                Label("Settings...", systemImage: "gearshape")
+            }
+            // Optional: Add the standard keyboard shortcut (Cmd + ,)
+            .keyboardShortcut(",")
+            
+            Divider()
+            Button("Quit") { NSApplication.shared.terminate(nil) }
+        } label: {
+            Image(systemName: isFeatureEnabled ? "checkmark.circle.fill" : "circle")
+        }
     }
 }
 
@@ -51,7 +74,7 @@ struct WindowAccessor: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
-        DispatchQueue.main.async {
+        Task { @MainActor in
             callback(view.window)
         }
         return view
@@ -62,9 +85,5 @@ struct WindowAccessor: NSViewRepresentable {
 
 
 #Preview {
-    AnimatedBarView()
-}
-
-#Playground {
-    _ = 1 + 2
+    AnimatedBarView(isFeatureEnabled: .constant(false))
 }

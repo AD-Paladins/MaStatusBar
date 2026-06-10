@@ -7,33 +7,37 @@
 
 import SwiftUI
 
-//struct AnimatedBarView: View {
-//    @State private var angle: Double = 0
-//
-//    var body: some View {
-//        Rectangle()
-//            .fill(
-//                AngularGradient(
-//                    colors: [.purple, .blue, .cyan, .purple],
-//                    center: .center,
-//                    angle: .degrees(angle)
-//                )
-//            )
-//            .drawingGroup()
-//            .onAppear {
-//                withAnimation(
-//                    .linear(duration: 8)
-//                        .repeatForever(autoreverses: false)
-//                ) {
-//                    angle = 360
-//                }
-//            }
-//    }
-//}
+struct AnimatedBarAngularView: View {
+    @State private var angle: Double = 0
+    @Binding var isFeatureEnabled: Bool
+    
+    var body: some View {
+        Rectangle()
+            .fill(
+                AngularGradient(
+                    colors: [.purple, .blue, .cyan, .purple],
+                    center: .topLeading,
+                    angle: .degrees(angle)
+                )
+            )
+            .drawingGroup()
+            .opacity(isFeatureEnabled ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: isFeatureEnabled)
+            .onAppear {
+                guard isFeatureEnabled else { return }
+                withAnimation(
+                    .linear(duration: 8)
+                    .repeatForever(autoreverses: false)
+                ) {
+                    angle = 360
+                }
+            }
+    }
+}
 
 struct AnimatedBarView: View {
     @State private var offset: CGFloat = 0
-
+    @Binding var isFeatureEnabled: Bool
     private let colors: [Color] = [
         .purple,
         .blue,
@@ -63,8 +67,10 @@ struct AnimatedBarView: View {
             )
             .frame(width: geo.size.width * 2)
             .offset(x: offset)
-            .clipped()
-            .onAppear {
+            .drawingGroup()
+            .task(id: isFeatureEnabled) {
+                guard isFeatureEnabled else { return }
+                offset = 0
                 withAnimation(
                     .linear(duration: 10)
                     .repeatForever(autoreverses: false)
@@ -72,10 +78,12 @@ struct AnimatedBarView: View {
                     offset = -geo.size.width
                 }
             }
+            .opacity(isFeatureEnabled ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: isFeatureEnabled)
         }
     }
 }
 
 #Preview {
-    AnimatedBarView()
+    AnimatedBarView(isFeatureEnabled: .constant(true))
 }
