@@ -6,7 +6,6 @@ Lee estos archivos al inicio de cada sesión para arrancar con contexto completo
 
 - `docs/PROJECT.md` — qué hace la app, estado actual, objetivos
 - `docs/ARCHITECTURE.md` — estructura, patrones, decisiones técnicas
-- `docs/ROADMAP.md` — checklist de lo hecho, en progreso y pendiente
 - `docs/SPEC.md` — especificación general del proyecto (requisitos, escenarios)
 
 ## Stack
