@@ -48,6 +48,61 @@ let defaultGradientColors: [Color] = [
 
 let gradientColorsKey = "gradientColors"
 
+struct ColorPreset: Identifiable {
+    let id = UUID()
+    let name: String
+    let colors: [Color]
+}
+
+let gradientPresets: [ColorPreset] = [
+    ColorPreset(name: "Rainbow", colors: defaultGradientColors),
+    ColorPreset(name: "Ocean", colors: [
+        Color(red: 0, green: 0.5, blue: 0.5),
+        .blue,
+        Color(red: 0.1, green: 0.3, blue: 0.7),
+        .cyan,
+        Color(red: 0, green: 0.8, blue: 0.8),
+        Color(red: 0, green: 0.4, blue: 0.6),
+        .indigo
+    ]),
+    ColorPreset(name: "Sunset", colors: [
+        .red,
+        .orange,
+        .yellow,
+        .pink,
+        .purple,
+        Color(red: 0.8, green: 0.2, blue: 0.5),
+        Color(red: 0.6, green: 0, blue: 0.6)
+    ]),
+    ColorPreset(name: "Forest", colors: [
+        Color(red: 0.1, green: 0.5, blue: 0.1),
+        .mint,
+        Color(red: 0.2, green: 0.6, blue: 0.2),
+        Color(red: 0.3, green: 0.7, blue: 0.2),
+        .teal,
+        Color(red: 0, green: 0.4, blue: 0.3),
+        Color(red: 0.1, green: 0.3, blue: 0.1)
+    ]),
+    ColorPreset(name: "Neon", colors: [
+        Color(red: 1, green: 0, blue: 1),
+        Color(red: 1, green: 0, blue: 0.5),
+        Color(red: 1, green: 0.4, blue: 0),
+        .yellow,
+        Color(red: 0, green: 1, blue: 0),
+        Color(red: 0, green: 0.5, blue: 1),
+        Color(red: 0.3, green: 0, blue: 0.8)
+    ]),
+    ColorPreset(name: "Monochrome", colors: [
+        Color(red: 0.15, green: 0.15, blue: 0.15),
+        Color(red: 0.35, green: 0.35, blue: 0.35),
+        Color(red: 0.55, green: 0.55, blue: 0.55),
+        Color(red: 0.7, green: 0.7, blue: 0.7),
+        Color(red: 0.55, green: 0.55, blue: 0.55),
+        Color(red: 0.35, green: 0.35, blue: 0.35),
+        Color(red: 0.15, green: 0.15, blue: 0.15)
+    ]),
+]
+
 extension Color {
     static func storedGradientColors() -> [Color] {
         guard let data = UserDefaults.standard.data(forKey: gradientColorsKey),
@@ -62,5 +117,9 @@ extension Color {
         let hexes = colors.map { NSColor($0).hexString }
         let data = (try? JSONEncoder().encode(hexes)) ?? Data()
         UserDefaults.standard.set(data, forKey: gradientColorsKey)
+    }
+
+    static func resetGradientColors() {
+        UserDefaults.standard.removeObject(forKey: gradientColorsKey)
     }
 }

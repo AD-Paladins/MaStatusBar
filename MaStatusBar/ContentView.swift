@@ -1,4 +1,5 @@
 import Combine
+import ServiceManagement
 import SwiftUI
 
 @main struct MaStatusBar: App {
@@ -6,6 +7,11 @@ import SwiftUI
     @AppStorage("isFeatureEnabled") private var isFeatureEnabled = true
     @AppStorage("isAnimationEnabled") private var isAnimationEnabled = false
     @State private var statusWindow: NSWindow?
+
+    init() {
+        let isRegistered = SMAppService.mainApp.status == .enabled
+        UserDefaults.standard.set(isRegistered, forKey: "launchAtLogin")
+    }
     
     var body: some Scene {
         WindowGroup {

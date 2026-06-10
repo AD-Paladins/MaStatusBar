@@ -12,12 +12,18 @@ struct AnimatedBarAngularView: View {
     @State private var angle: Double = 0
     @Binding var isFeatureEnabled: Bool
     @Binding var isAnimationEnabled: Bool
-    
+    @AppStorage(gradientColorsKey) private var gradientColorsData: Data = Data()
+
     private var gradientColors: [Color] {
-        let base = Color.storedGradientColors()
+        guard !gradientColorsData.isEmpty,
+              let hexes = try? JSONDecoder().decode([String].self, from: gradientColorsData),
+              hexes.count == 7
+        else { return defaultGradientColors }
+        let base = hexes.compactMap { NSColor(hex: $0).map(Color.init) }
+        guard base.count == 7 else { return defaultGradientColors }
         return [base[0], base[1], base[2], base[0]]
     }
-    
+
     var body: some View {
         Rectangle()
             .fill(
@@ -46,15 +52,22 @@ struct AnimatedBarView: View {
     @State private var offset: CGFloat = 0
     @Binding var isFeatureEnabled: Bool
     @Binding var isAnimationEnabled: Bool
+    @AppStorage(gradientColorsKey) private var gradientColorsData: Data = Data()
+    @AppStorage("animationSpeed") private var animationSpeed: Double = 0.5
 
     private var colors: [Color] {
-        let base = Color.storedGradientColors()
+        guard !gradientColorsData.isEmpty,
+              let hexes = try? JSONDecoder().decode([String].self, from: gradientColorsData),
+              hexes.count == 7
+        else { return defaultGradientColors + [defaultGradientColors[0]] + defaultGradientColors.dropFirst() + [defaultGradientColors[0]] }
+        let base = hexes.compactMap { NSColor(hex: $0).map(Color.init) }
+        guard base.count == 7 else { return defaultGradientColors + [defaultGradientColors[0]] + defaultGradientColors.dropFirst() + [defaultGradientColors[0]] }
         return base + [base[0]] + base.dropFirst() + [base[0]]
     }
 
     var body: some View {
         GeometryReader { geo in
-            let scrollSpeed: CGFloat = 0.5
+            let scrollSpeed: CGFloat = CGFloat(animationSpeed)
             
             LinearGradient(
                 colors: colors,
