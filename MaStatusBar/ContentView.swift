@@ -6,6 +6,7 @@ import SwiftUI
     
     @AppStorage("isFeatureEnabled") private var isFeatureEnabled = true
     @AppStorage("isAnimationEnabled") private var isAnimationEnabled = false
+    @AppStorage("barStyle") private var barStyle: BarStyle = .linear
     @State private var statusWindow: NSWindow?
 
     init() {
@@ -15,18 +16,25 @@ import SwiftUI
     
     var body: some Scene {
         WindowGroup {
-            AnimatedBarView(isFeatureEnabled: $isFeatureEnabled, isAnimationEnabled: $isAnimationEnabled)
-                .background(
-                    WindowAccessor { window in
-                        statusWindow = window
-                        configureStatusBar(window)
-                    }
-                )
-                .onReceive(
-                    NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)
-                ) { _ in
-                    configureStatusBar(statusWindow)
+            Group {
+                switch barStyle {
+                case .linear:
+                    AnimatedBarView(isFeatureEnabled: $isFeatureEnabled, isAnimationEnabled: $isAnimationEnabled)
+                case .angular:
+                    AnimatedBarAngularView(isFeatureEnabled: $isFeatureEnabled, isAnimationEnabled: $isAnimationEnabled)
                 }
+            }
+            .background(
+                WindowAccessor { window in
+                    statusWindow = window
+                    configureStatusBar(window)
+                }
+            )
+            .onReceive(
+                NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)
+            ) { _ in
+                configureStatusBar(statusWindow)
+            }
         }
         
         // 2. The Native Settings Window Scene

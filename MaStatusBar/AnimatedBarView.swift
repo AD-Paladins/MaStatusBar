@@ -8,11 +8,38 @@
 import Combine
 import SwiftUI
 
+enum BarStyle: String, CaseIterable {
+    case linear = "linear"
+    case angular = "angular"
+}
+
+let angularCenterMap: [(String, UnitPoint)] = [
+    ("Top Leading", .topLeading),
+    ("Top", .top),
+    ("Top Trailing", .topTrailing),
+    ("Leading", .leading),
+    ("Center", .center),
+    ("Trailing", .trailing),
+    ("Bottom Leading", .bottomLeading),
+    ("Bottom", .bottom),
+    ("Bottom Trailing", .bottomTrailing),
+]
+
+extension UnitPoint {
+    static func fromStorageKey(_ key: String) -> UnitPoint {
+        angularCenterMap.first(where: { $0.0 == key })?.1 ?? .topLeading
+    }
+}
+
+let angularCenterStorageKey = "angularGradientCenter"
+
 struct AnimatedBarAngularView: View {
     @State private var angle: Double = 0
     @Binding var isFeatureEnabled: Bool
     @Binding var isAnimationEnabled: Bool
     @AppStorage(gradientColorsKey) private var gradientColorsData: Data = Data()
+    @AppStorage("animationSpeed") private var animationSpeed: Double = 0.5
+    @AppStorage(angularCenterStorageKey) private var centerKey: String = "Top Leading"
 
     private var gradientColors: [Color] {
         guard !gradientColorsData.isEmpty,
@@ -29,21 +56,16 @@ struct AnimatedBarAngularView: View {
             .fill(
                 AngularGradient(
                     colors: gradientColors,
-                    center: .topLeading,
+                    center: UnitPoint.fromStorageKey(centerKey),
                     angle: .degrees(angle)
                 )
             )
-            .drawingGroup()
             .opacity(isFeatureEnabled ? 1 : 0)
             .animation(.easeInOut(duration: 0.3), value: isFeatureEnabled)
-            .onAppear {
+            .onReceive(Timer.publish(every: 1/60, on: .main, in: .common).autoconnect()) { _ in
                 guard isFeatureEnabled && isAnimationEnabled else { return }
-                withAnimation(
-                    .linear(duration: 8)
-                    .repeatForever(autoreverses: false)
-                ) {
-                    angle = 360
-                }
+                angle += animationSpeed * 1.5
+                if angle >= 360 { angle -= 360 }
             }
     }
 }

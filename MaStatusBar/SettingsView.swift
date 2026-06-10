@@ -13,6 +13,8 @@ struct SettingsView: View {
     @AppStorage("launchAtLogin") private var launchAtLogin = false
     @AppStorage("isAnimationEnabled") private var isAnimationEnabled = false
     @AppStorage("animationSpeed") private var animationSpeed: Double = 0.5
+    @AppStorage("barStyle") private var barStyle: BarStyle = .linear
+    @AppStorage(angularCenterStorageKey) private var angularCenterKey: String = "Top Leading"
 
     @State private var gradientColors: [Color] = Color.storedGradientColors()
     @State private var selectedPresetId: UUID?
@@ -28,6 +30,19 @@ struct SettingsView: View {
                     Text("Animation speed: \(animationSpeed, specifier: "%.1f")")
                         .foregroundStyle(.secondary)
                     Slider(value: $animationSpeed, in: 0.1...3.0, step: 0.1)
+                }
+
+                Picker("Bar style", selection: $barStyle) {
+                    Text("Rainbow").tag(BarStyle.linear)
+                    Text("Angular").tag(BarStyle.angular)
+                }
+
+                if barStyle == .angular {
+                    Picker("Gradient center", selection: $angularCenterKey) {
+                        ForEach(angularCenterMap, id: \.0) { label, _ in
+                            Text(label)
+                        }
+                    }
                 }
 
                 Toggle("Launch app at login", isOn: $launchAtLogin)
