@@ -157,6 +157,22 @@ The system SHALL render animations at 60fps without significant CPU/GPU overhead
 - THEN the animation SHALL run at 60fps
 - AND the animation SHALL NOT introduce visible stutter or frame drops
 
+### R7: Testability
+
+The system SHOULD include unit tests for core logic.
+
+#### Scenario: XCTest target exists
+
+- GIVEN the project is configured
+- THEN there SHALL be an XCTest target for unit tests
+- AND tests SHALL cover animation gating logic and settings persistence
+
+#### Scenario: Animation gate tested
+
+- GIVEN `isFeatureEnabled` is false
+- WHEN the bar renders
+- THEN a test SHALL verify the animation loop does not start
+
 ## Constraints
 
 - **macOS 14+** target. APIs like `SMAppService` require Sonoma.

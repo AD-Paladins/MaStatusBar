@@ -22,3 +22,4 @@ Functional but early. The animated bar renders, the menu icon exists, settings w
 3. Polish: smooth, seamless color animations (no sudden jump at cycle end)
 4. Good macOS citizen: launch at login, proper Space behavior, accessibility
 5. Settings panel with real options
+6. Unit tests via XCTest for core animation and settings logic
