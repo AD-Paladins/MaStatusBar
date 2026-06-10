@@ -3,10 +3,11 @@ import SwiftUI
 @main struct MaStatusBar: App {
     
     @AppStorage("isFeatureEnabled") private var isFeatureEnabled = false
+    @AppStorage("isAnimationEnabled") private var isAnimationEnabled = false
     
     var body: some Scene {
         WindowGroup {
-            AnimatedBarView(isFeatureEnabled: $isFeatureEnabled)
+            AnimatedBarView(isFeatureEnabled: $isFeatureEnabled, isAnimationEnabled: $isAnimationEnabled)
                 .background(
                     WindowAccessor { window in
                         guard let window else { return }
@@ -52,7 +53,8 @@ import SwiftUI
         
         // 3. The Status Bar / Menu Bar Extra
         MenuBarExtra {
-            Toggle("Feature Status", isOn: $isFeatureEnabled)
+            Toggle("Show Status Bar", isOn: $isFeatureEnabled)
+            Toggle("Start/Stop Animation", isOn: $isAnimationEnabled)
             // 4. The magic button that opens the Settings scene
             SettingsLink {
                 Label("Settings...", systemImage: "gearshape")
@@ -85,5 +87,5 @@ struct WindowAccessor: NSViewRepresentable {
 
 
 #Preview {
-    AnimatedBarView(isFeatureEnabled: .constant(false))
+    AnimatedBarView(isFeatureEnabled: .constant(false), isAnimationEnabled: .constant(false))
 }

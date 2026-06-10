@@ -10,12 +10,14 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("isFeatureEnabled") private var isFeatureEnabled = false
     @AppStorage("launchAtLogin") private var launchAtLogin = false
+    @AppStorage("isAnimationEnabled") private var isAnimationEnabled = false
 
     var body: some View {
         TabView {
             // General Tab
             Form {
                 Toggle("Enable core feature", isOn: $isFeatureEnabled)
+                Toggle("Animate colors", isOn: $isAnimationEnabled)
                 Toggle("Launch app at login", isOn: $launchAtLogin)
             }
             .padding()

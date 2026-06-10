@@ -68,6 +68,29 @@ The system SHALL support two animated bar styles: a scrolling rainbow gradient a
 - THEN the animation SHALL stop
 - AND the bar MAY remain visible or hide depending on the "show bar" setting
 
+### R2.1: Animation Control
+
+The system SHALL provide an independent toggle to start and stop bar animation, separate from bar visibility.
+
+#### Scenario: Animation toggles independently
+
+- GIVEN the bar is visible
+- WHEN the user disables animation
+- THEN the bar SHALL remain visible with a static gradient
+- AND the animation SHALL stop
+
+#### Scenario: Animation defaults to off
+
+- GIVEN the app is launched for the first time
+- THEN the animation SHALL be disabled by default
+- AND the bar SHALL be static if visible
+
+#### Scenario: Animation re-enables
+
+- GIVEN animation is disabled and the bar is visible
+- WHEN the user enables animation
+- THEN the gradient SHALL start animating smoothly from its current position
+
 ### R3: Menu Bar Extra
 
 The system SHALL provide a menu bar icon with controls.

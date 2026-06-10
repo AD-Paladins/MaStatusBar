@@ -10,6 +10,7 @@ import SwiftUI
 struct AnimatedBarAngularView: View {
     @State private var angle: Double = 0
     @Binding var isFeatureEnabled: Bool
+    @Binding var isAnimationEnabled: Bool
     
     var body: some View {
         Rectangle()
@@ -24,7 +25,7 @@ struct AnimatedBarAngularView: View {
             .opacity(isFeatureEnabled ? 1 : 0)
             .animation(.easeInOut(duration: 0.3), value: isFeatureEnabled)
             .onAppear {
-                guard isFeatureEnabled else { return }
+                guard isFeatureEnabled && isAnimationEnabled else { return }
                 withAnimation(
                     .linear(duration: 8)
                     .repeatForever(autoreverses: false)
@@ -38,6 +39,7 @@ struct AnimatedBarAngularView: View {
 struct AnimatedBarView: View {
     @State private var offset: CGFloat = 0
     @Binding var isFeatureEnabled: Bool
+    @Binding var isAnimationEnabled: Bool
     private let colors: [Color] = [
         .purple,
         .blue,
@@ -68,8 +70,8 @@ struct AnimatedBarView: View {
             .frame(width: geo.size.width * 2)
             .offset(x: offset)
             .drawingGroup()
-            .task(id: isFeatureEnabled) {
-                guard isFeatureEnabled else { return }
+            .task(id: "\(isFeatureEnabled)-\(isAnimationEnabled)") {
+                guard isFeatureEnabled && isAnimationEnabled else { return }
                 offset = 0
                 withAnimation(
                     .linear(duration: 10)
@@ -85,5 +87,5 @@ struct AnimatedBarView: View {
 }
 
 #Preview {
-    AnimatedBarView(isFeatureEnabled: .constant(true))
+    AnimatedBarView(isFeatureEnabled: .constant(true), isAnimationEnabled: .constant(true))
 }

@@ -6,7 +6,7 @@
 |---|---|
 | `ContentView.swift` | `@main` entry, `App` conformance. Hosts `WindowGroup` (the bar), `Settings` scene, and `MenuBarExtra`. |
 | `AnimatedBarView.swift` | Two views: `AnimatedBarView` (scrolling rainbow) and `AnimatedBarAngularView` (spinning angular gradient). Both use `drawingGroup()` for Metal rendering. |
-| `SettingsView.swift` | Tab-based settings (`General` / `Advanced`). Reads/writes via `@AppStorage`. |
+| `SettingsView.swift` | Tab-based settings (`General` / `Advanced`). Controls bar visibility and animation independently via `@AppStorage`. |
 
 ## Key patterns
 
@@ -24,5 +24,5 @@
 ## Decisions & tradeoffs
 
 - **`drawingGroup()`**: Bakes the gradient into a Metal off-screen buffer — essential for performance with full-width animated gradients.
-- **`@AppStorage` over `@State`**: Persists toggle state. The `isFeatureEnabled` flag controls bar visibility with a 0.3s easeInOut fade and gates the animation loop via `.task(id:)` (rainbow) / `guard` (angular).
+- **`@AppStorage` over `@State`**: Persists toggle state. `isFeatureEnabled` controls bar visibility with a 0.3s easeInOut fade. `isAnimationEnabled` (default: false) controls animation independently. Animation runs only when both flags are true.
 - **`SettingsLink` over manual window**: Cleaner SwiftUI-native path. Relies on the `Settings` scene being present.

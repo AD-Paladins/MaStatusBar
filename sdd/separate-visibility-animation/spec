@@ -1,0 +1,70 @@
+# Separate Visibility & Animation — Specifications
+
+## Animation-Control (New Capability)
+
+## Purpose
+
+A dedicated control for animation behavior that operates independently from bar visibility.
+
+## Requirements
+
+### Requirement: Animation Toggle Independence
+
+The system SHALL support independent animation control that is separate from bar visibility.
+
+#### Scenario: Toggle animation from MenuBarExtra
+
+- GIVEN the app is running with animation enabled
+- WHEN the user clicks "Start/Stop Animation" in MenuBarExtra
+- THEN the animation SHALL start or stop immediately
+- AND bar visibility SHALL remain unchanged
+
+#### Scenario: Toggle animation from Settings
+
+- GIVEN the user opens Settings → General
+- WHEN the user toggles "Start/Stop Animation"
+- THEN animation SHALL start or stop immediately
+- AND bar visibility SHALL remain unchanged
+
+#### Scenario: Default animation state
+
+- GIVEN the app is launched
+- THEN animation SHALL be disabled by default
+- AND the bar SHALL be visible if visibility is enabled
+
+#### Scenario: Animation on with bar hidden
+
+- GIVEN the bar is hidden via visibility toggle
+- WHEN the user enables animation
+- THEN animation SHALL start
+- AND the bar SHALL remain hidden
+
+## Status-Bar (Modified Capability)
+
+## Delta for status-bar
+
+### MODIFIED Requirements
+
+### Requirement: Status Bar Rendering
+
+The system SHALL render a full-width colored bar at the top of the screen, below the system menu bar area.
+(Previously: Rendering included animation control)
+
+#### Scenario: Bar appears on launch
+
+- GIVEN the app is launched
+- THEN a bar SHALL be rendered across the full screen width
+- AND the bar SHALL be 28pt tall, positioned at `screen.maxY - 28pt`
+
+#### Scenario: Bar stays on all Spaces
+
+- GIVEN the user switches Spaces or fullscreen apps
+- THEN the bar SHALL remain visible on the current Space
+- AND the bar SHALL NOT appear in the Mission Control / window switcher
+
+#### Scenario: Visibility toggle still works (no regression)
+
+- GIVEN the user enables or disables the feature via MenuBarExtra or Settings
+- WHEN the toggle is used
+- THEN the bar SHALL appear or disappear immediately
+- AND animation SHALL remain unaffected by visibility changes
