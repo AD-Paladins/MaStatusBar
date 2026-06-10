@@ -5,6 +5,7 @@
 //  Created by andres paladines on 6/9/26.
 //
 
+import Combine
 import SwiftUI
 
 struct AnimatedBarAngularView: View {
@@ -62,6 +63,8 @@ struct AnimatedBarView: View {
 
     var body: some View {
         GeometryReader { geo in
+            let scrollSpeed: CGFloat = 0.5
+            
             LinearGradient(
                 colors: colors,
                 startPoint: .leading,
@@ -70,14 +73,11 @@ struct AnimatedBarView: View {
             .frame(width: geo.size.width * 2)
             .offset(x: offset)
             .drawingGroup()
-            .task(id: "\(isFeatureEnabled)-\(isAnimationEnabled)") {
+            .onReceive(Timer.publish(every: 1/60, on: .main, in: .common).autoconnect()) { _ in
                 guard isFeatureEnabled && isAnimationEnabled else { return }
-                offset = 0
-                withAnimation(
-                    .linear(duration: 10)
-                    .repeatForever(autoreverses: false)
-                ) {
-                    offset = -geo.size.width
+                offset -= scrollSpeed
+                if offset <= -geo.size.width {
+                    offset += geo.size.width
                 }
             }
             .opacity(isFeatureEnabled ? 1 : 0)
